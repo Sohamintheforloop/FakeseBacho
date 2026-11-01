@@ -1,0 +1,47 @@
+# ─────────────────────────────────────────────────────────────────
+#  FakeseBacho — .gitignore
+# ─────────────────────────────────────────────────────────────────
+
+# !! CRITICAL — developer secrets
+dev.vars
+.dev.vars
+*.vars
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+
+# Wrangler local state (may contain secrets)
+.wrangler/
+wrangler.toml.local
+
+# Node / worker deps
+node_modules/
+dist/
+build/
+
+# Extension packaging artifacts
+*.zip
+*.crx
+*.pem
+# ^ .pem is the Chrome extension private key — NEVER commit this
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test outputs
+coverage/
+.nyc_output/

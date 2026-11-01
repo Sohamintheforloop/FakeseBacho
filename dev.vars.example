@@ -1,0 +1,20 @@
+# FakeseBacho — dev.vars template
+# Copy this to dev.vars and fill in your values.
+# dev.vars is in .gitignore and MUST NOT be committed.
+#
+# Contributors: you don't need this file to work on the extension.
+# See CONTRIBUTING.md for the setup that doesn't need any secrets.
+
+SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.YOUR_SERVICE_ROLE
+SUPABASE_DB_PASSWORD=
+
+CF_ACCOUNT_ID=
+CF_API_TOKEN=
+WORKER_AUTH_SECRET=generate_with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+SENTRY_DSN=
+POSTHOG_KEY=
+
+NODE_ENV=development
+WORKER_URL=http://localhost:8787

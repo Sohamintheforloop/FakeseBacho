@@ -1,0 +1,75 @@
+{
+  "manifest_version": 3,
+  "name": "FakeseBacho — Job Scam Shield",
+  "short_name": "FakeseBacho",
+  "version": "1.0.0",
+  "description": "AI-powered fake job & internship detector. Analyzes listings on Internshala, LinkedIn, Naukri, and more for red flags, scam signals, and suspicious patterns.",
+
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "https://internshala.com/*",
+    "https://www.internshala.com/*",
+    "https://www.linkedin.com/*",
+    "https://naukri.com/*",
+    "https://www.naukri.com/*",
+    "https://www.shine.com/*",
+    "https://www.indeed.co.in/*",
+    "https://www.indeed.com/*",
+    "https://unstop.com/*",
+    "https://www.unstop.com/*",
+    "https://apna.co/*",
+    "https://www.apna.co/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "FakeseBacho",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://internshala.com/*",
+        "https://www.internshala.com/*",
+        "https://www.linkedin.com/jobs/*",
+        "https://naukri.com/*",
+        "https://www.naukri.com/*",
+        "https://www.shine.com/*",
+        "https://www.indeed.co.in/*",
+        "https://www.indeed.com/*",
+        "https://unstop.com/*",
+        "https://www.unstop.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

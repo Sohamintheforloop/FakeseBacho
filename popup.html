@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FakeseBacho</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-logo">
+    <span class="logo-mark">FB</span>
+    <div>
+      <div class="logo-name">FakeseBacho</div>
+      <div class="logo-sub">Job Scam Shield</div>
+    </div>
+  </div>
+  <button class="icon-btn" id="btn-settings" title="Settings">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+  </button>
+</header>
+
+<!-- TABS -->
+<nav class="tabs" id="tabs">
+  <button class="tab active" data-tab="analysis">Analysis</button>
+  <button class="tab" data-tab="history">History</button>
+  <button class="tab" data-tab="tips">Tips</button>
+</nav>
+
+<!-- ═══════════════ TAB: ANALYSIS ═══════════════ -->
+<div class="tab-panel active" id="tab-analysis">
+
+  <!-- Not a job page state -->
+  <div class="state-idle" id="state-idle">
+    <div class="idle-icon">🔍</div>
+    <div class="idle-title">Navigate to a job listing</div>
+    <div class="idle-body">FakeseBacho works on Internshala, LinkedIn, Naukri, Indeed, Shine, and Unstop.</div>
+    <div class="platform-chips">
+      <span class="platform-chip">Internshala</span>
+      <span class="platform-chip">LinkedIn</span>
+      <span class="platform-chip">Naukri</span>
+      <span class="platform-chip">Indeed</span>
+      <span class="platform-chip">Unstop</span>
+    </div>
+  </div>
+
+  <!-- No API key state -->
+  <div class="state-nokey" id="state-nokey" style="display:none">
+    <div class="nokey-icon">🔑</div>
+    <div class="nokey-title">API key needed</div>
+    <div class="nokey-body">FakeseBacho uses Claude AI for analysis. Add your free Anthropic API key to get started.</div>
+    <a href="https://console.anthropic.com/keys" target="_blank" class="btn-accent-outline">Get API key (free) →</a>
+    <button class="btn-accent" id="btn-go-settings">Add key in Settings</button>
+  </div>
+
+  <!-- Scanning state -->
+  <div class="state-scanning" id="state-scanning" style="display:none">
+    <div class="scanning-animation">
+      <div class="scan-ring"></div>
+      <div class="scan-logo">FB</div>
+    </div>
+    <div class="scanning-text">Analyzing listing…</div>
+    <div class="scanning-sub" id="scanning-platform"></div>
+  </div>
+
+  <!-- Result state -->
+  <div id="state-result" style="display:none">
+    <!-- Score Section -->
+    <div class="score-section" id="score-section">
+      <div class="score-meta">
+        <div class="score-platform" id="r-platform"></div>
+        <div class="score-from-cache" id="r-cache-note" style="display:none">Cached · <button class="btn-rescan-inline" id="btn-rescan">refresh</button></div>
+      </div>
+      <div class="score-display">
+        <canvas id="gauge-canvas" width="180" height="90"></canvas>
+        <div class="score-number" id="r-score">0</div>
+      </div>
+      <div class="score-verdict" id="r-verdict-badge"></div>
+      <p class="score-summary" id="r-summary"></p>
+      <div class="score-job-info" id="r-job-info"></div>
+    </div>
+
+    <!-- Company verdict -->
+    <div class="section" id="section-company">
+      <div class="section-label">Company</div>
+      <div class="company-row" id="r-company-row">
+        <span class="company-name" id="r-company-name"></span>
+        <span class="company-confidence" id="r-company-conf"></span>
+      </div>
+      <p class="company-notes" id="r-company-notes"></p>
+    </div>
+
+    <!-- Flags -->
+    <div class="section" id="section-flags" style="display:none">
+      <div class="section-label">Red Flags Detected</div>
+      <div class="flags-list" id="flags-list"></div>
+    </div>
+
+    <!-- Positives -->
+    <div class="section" id="section-positives" style="display:none">
+      <div class="section-label">Positive Signals</div>
+      <div class="positives-list" id="positives-list"></div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="section" id="section-recs" style="display:none">
+      <div class="section-label">What to do</div>
+      <ol class="recs-list" id="recs-list"></ol>
+    </div>
+
+    <!-- Report -->
+    <div class="section report-section">
+      <div class="community-row">
+        <span class="community-label">Community reports on this URL</span>
+        <span class="community-count" id="r-report-count">0</span>
+      </div>
+      <button class="btn-report" id="btn-report">⚑ Report as suspicious</button>
+    </div>
+
+    <!-- Scan again -->
+    <div class="rescan-row">
+      <button class="btn-rescan" id="btn-rescan-full">↺ Re-scan with AI</button>
+      <div class="analysed-at" id="r-analysed-at"></div>
+    </div>
+  </div>
+
+  <!-- Error state -->
+  <div class="state-error" id="state-error" style="display:none">
+    <div class="error-icon">⚠️</div>
+    <div class="error-msg" id="error-msg">Something went wrong.</div>
+    <button class="btn-accent" id="btn-retry">Retry</button>
+  </div>
+</div>
+
+<!-- ═══════════════ TAB: HISTORY ═══════════════ -->
+<div class="tab-panel" id="tab-history" style="display:none">
+  <div class="history-empty" id="history-empty" style="display:none">
+    <div class="idle-icon">📋</div>
+    <div class="idle-title">No scans yet</div>
+    <div class="idle-body">Your analysis history will appear here.</div>
+  </div>
+  <div class="history-list" id="history-list"></div>
+</div>
+
+<!-- ═══════════════ TAB: TIPS ═══════════════ -->
+<div class="tab-panel" id="tab-tips" style="display:none">
+  <div class="tips-content">
+    <div class="tips-header">
+      <h2 class="tips-title">Stay Scam-Safe</h2>
+      <p class="tips-sub">Key rules for job hunting in India</p>
+    </div>
+
+    <div class="tip-group">
+      <div class="tip-group-label danger-label">🚨 Never do these</div>
+      <div class="tip-item tip-danger">
+        <div class="tip-icon">💸</div>
+        <div>
+          <strong>Never pay to get a job</strong>
+          <p>Any request for registration fee, security deposit, or training fee is a scam. Legitimate employers never charge candidates.</p>
+        </div>
+      </div>
+      <div class="tip-item tip-danger">
+        <div class="tip-icon">🪪</div>
+        <div>
+          <strong>Never share Aadhaar or PAN before being hired</strong>
+          <p>Real employers only need ID documents after a formal offer letter, not during the application stage.</p>
+        </div>
+      </div>
+      <div class="tip-item tip-danger">
+        <div class="tip-icon">🏦</div>
+        <div>
+          <strong>Never share bank details to "receive training materials"</strong>
+          <p>This is the oldest trick. No employer needs your account number before hiring you.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-group">
+      <div class="tip-group-label warn-label">⚡ Be cautious when</div>
+      <div class="tip-item tip-warn">
+        <div class="tip-icon">📱</div>
+        <div>
+          <strong>Contact is WhatsApp-only</strong>
+          <p>Legitimate companies use professional email. WhatsApp-only recruiters are a common scam vector.</p>
+        </div>
+      </div>
+      <div class="tip-item tip-warn">
+        <div class="tip-icon">🎯</div>
+        <div>
+          <strong>Salary seems too high for the role</strong>
+          <p>Check market rates on Glassdoor. If a fresher role offers ₹80,000/month, something is wrong.</p>
+        </div>
+      </div>
+      <div class="tip-item tip-warn">
+        <div class="tip-icon">⏱️</div>
+        <div>
+          <strong>Immediate job offer without interview</strong>
+          <p>Real companies have a selection process. Instant offers are pressure tactics.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-group">
+      <div class="tip-group-label safe-label">✅ Always verify</div>
+      <div class="tip-item tip-safe">
+        <div class="tip-icon">🌐</div>
+        <div>
+          <strong>Check company on MCA21</strong>
+          <p>Search the company name on <a href="https://www.mca.gov.in/content/mca/global/en/mca/master-data/MDS.html" target="_blank">MCA21 portal</a> to confirm they are registered in India.</p>
+        </div>
+      </div>
+      <div class="tip-item tip-safe">
+        <div class="tip-icon">🔎</div>
+        <div>
+          <strong>Search "[Company] + scam + reviews"</strong>
+          <p>Do a quick Google search before applying. Real scam companies have warning posts by past victims.</p>
+        </div>
+      </div>
+      <div class="tip-item tip-safe">
+        <div class="tip-icon">📧</div>
+        <div>
+          <strong>Verify recruiter email domain</strong>
+          <p>If the company is "TechCorp" but the email is @gmail.com, that's a red flag. Official companies use @techcorp.com.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tips-report-link">
+      Report job fraud to <a href="https://cybercrime.gov.in/" target="_blank">cybercrime.gov.in</a> or call <strong>1930</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SETTINGS PANEL ═══════════════ -->
+<div class="settings-overlay" id="settings-overlay" style="display:none">
+  <div class="settings-panel">
+    <div class="settings-hdr">
+      <span class="settings-title">Settings</span>
+      <button class="icon-btn" id="btn-close-settings">✕</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Anthropic API Key</div>
+      <div class="api-key-row">
+        <input type="password" id="input-api-key" class="api-key-input" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+        <button class="btn-show-key" id="btn-show-key" title="Show/hide">👁</button>
+      </div>
+      <p class="api-key-help">
+        Your key stays in your browser — never sent to our servers.
+        <a href="https://console.anthropic.com/keys" target="_blank">Get a key free →</a>
+      </p>
+      <div class="api-key-status" id="api-key-status" style="display:none"></div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Behavior</div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <strong>Auto-scan job pages</strong>
+          <span>Automatically analyze listings when you open them</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-autoscan" checked>
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <strong>Show score badge</strong>
+          <span>Display risk score in the browser toolbar</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-badge" checked>
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <strong>Save analysis history</strong>
+          <span>Keep a log of scanned listings</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-history" checked>
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <strong>Sensitivity level</strong>
+          <span>How aggressively to flag risks</span>
+        </div>
+        <select class="sensitivity-select" id="select-sensitivity">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Privacy</div>
+      <p class="privacy-note">
+        FakeseBacho sends job listing text to Anthropic's API for analysis using your personal API key. No data is stored on external servers. Your analysis history is stored locally in your browser only.
+        <a href="https://www.anthropic.com/privacy" target="_blank">Anthropic Privacy Policy →</a>
+      </p>
+    </div>
+
+    <div class="settings-footer">
+      <button class="btn-save-settings" id="btn-save-settings">Save settings</button>
+      <button class="btn-clear-data" id="btn-clear-data">Clear all data</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ REPORT MODAL ═══════════════ -->
+<div class="modal-overlay" id="report-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title">Report suspicious listing</span>
+      <button class="icon-btn" id="btn-close-report">✕</button>
+    </div>
+    <p class="modal-sub">Select all that apply. Reports are stored locally on your device.</p>
+
+    <div class="report-reasons" id="report-reasons">
+      <label class="reason-check"><input type="checkbox" value="fee"> Asks for payment or deposit</label>
+      <label class="reason-check"><input type="checkbox" value="identity"> Requests sensitive personal ID upfront</label>
+      <label class="reason-check"><input type="checkbox" value="fake_company"> Company does not exist</label>
+      <label class="reason-check"><input type="checkbox" value="unrealistic"> Unrealistic pay / guaranteed income</label>
+      <label class="reason-check"><input type="checkbox" value="whatsapp"> WhatsApp-only contact</label>
+      <label class="reason-check"><input type="checkbox" value="no_interview"> Instant offer, no interview</label>
+      <label class="reason-check"><input type="checkbox" value="other"> Other</label>
+    </div>
+
+    <textarea id="report-note" class="report-note" placeholder="Optional: add more details…" rows="2"></textarea>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="btn-cancel-report">Cancel</button>
+      <button class="btn-danger" id="btn-submit-report" disabled>Submit Report</button>
+    </div>
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

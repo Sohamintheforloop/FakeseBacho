@@ -1,0 +1,22 @@
+# FakeseBacho — Cloudflare Worker config
+# Secrets are NOT stored here — use `wrangler secret put <NAME>`
+# See dev.vars for the list of secrets you need to set.
+
+name        = "faksebacho-worker"
+main        = "index.js"
+compatibility_date = "2024-01-01"
+
+# KV namespace for rate limiting
+# Create with: wrangler kv:namespace create "RATE_LIMIT_KV"
+# Then replace the id below with the output id.
+[[kv_namespaces]]
+binding  = "RATE_LIMIT_KV"
+id       = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+# Local dev — reads from dev.vars automatically (wrangler dev)
+[dev]
+port = 8787
+
+# Prod environment
+[env.production]
+name = "faksebacho-worker"
